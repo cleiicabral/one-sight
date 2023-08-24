@@ -6,6 +6,7 @@ use App\Dto\UserCreateDto;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Error;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -38,6 +39,22 @@ class UserRepository extends ServiceEntityRepository
         return $userFind;
     
         
+    }
+
+    public function findByEmail(string $email): ?User
+    {
+        try {
+
+            return $this->createQueryBuilder('u')
+            ->andWhere('u.email = :val')
+            ->setParameter('val', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        } catch (\Doctrine\DBAL\Exception $th) {
+            throw new Error($th->getMessage());
+        }
+   
     }
 
 //    /**
