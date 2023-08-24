@@ -6,7 +6,7 @@ use App\Dto\UserCreateDto;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Error;
+use Exception;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -25,19 +25,22 @@ class UserRepository extends ServiceEntityRepository
 
     public function create(UserCreateDto $userDto, ): User
     {
-        $user = new User();
-        $user->setName($userDto->name);
-        $user->setEmail($userDto->email);
-        $user->setPassword($userDto->password);
-        $user->setCreatedAt(new \DateTimeImmutable('now', new \DateTimeZone('America/Sao_Paulo')));
-
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
-        
-        $userFind = $this->findOneBySomeField($user->getId());
-
-        return $userFind;
+        try {
+            $user = new User();
+            $user->setName($userDto->name);
+            $user->setEmail($userDto->email);
+            $user->setPassword($userDto->password);
+            $user->setCreatedAt(new \DateTimeImmutable('now', new \DateTimeZone('America/Sao_Paulo')));
     
+            $this->getEntityManager()->persist($user);
+            $this->getEntityManager()->flush();
+            
+            $userFind = $this->findOneBySomeField($user->getId());
+
+            return $userFind;
+        } catch (\Doctrine\DBAL\Exception $th) {
+            throw new Exception($th->getMessage());
+        }
         
     }
 
@@ -67,21 +70,6 @@ class UserRepository extends ServiceEntityRepository
             throw new Error($th->getMessage());
         }
     }
-
-//    /**
-//     * @return User[] Returns an array of User objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
 
     public function findOneBySomeField(string $id): ?User
     {
