@@ -26,6 +26,8 @@ when@test:
         dbal:
             # "TEST_TOKEN" is typically set by ParaTest
             dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+        types:
+                uuid: Symfony\Bridge\Doctrine\Types\UuidType
 
 when@prod:
     doctrine:

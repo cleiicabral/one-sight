@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Dto\UserCreateDto;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,6 +22,24 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function create(UserCreateDto $userDto, ): User
+    {
+        $user = new User();
+        $user->setName($userDto->name);
+        $user->setEmail($userDto->email);
+        $user->setPassword($userDto->password);
+        $user->setCreatedAt(new \DateTimeImmutable('now', new \DateTimeZone('America/Sao_Paulo')));
+
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+        
+        $userFind = $this->findOneBySomeField($user->getId());
+
+        return $userFind;
+    
+        
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */
@@ -36,13 +55,13 @@ class UserRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?User
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneBySomeField(string $id): ?User
+    {
+       return $this->createQueryBuilder('u')
+            ->andWhere('u.id = :val')
+            ->setParameter('val', $id)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }
