@@ -4,7 +4,7 @@ namespace App\Service\User;
 
 use App\Dto\UserCreateDto;
 use App\Repository\UserRepository;
-use Error;
+use Exception;
 
 class UserCreateService {
 
@@ -20,7 +20,7 @@ class UserCreateService {
         $findUser = $this->userRepository->findByEmail($userDto->email);
 
         if($findUser){
-            throw new Error("Usuário já existe com este e-mail, tente utilizar outro e-mail");
+            throw new Exception("Usuário já existe com este e-mail, tente utilizar outro e-mail");
         }    
         $userDto->password = hash("md5",$userDto->password);
 
