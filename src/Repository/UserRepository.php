@@ -57,6 +57,17 @@ class UserRepository extends ServiceEntityRepository
    
     }
 
+    public function index(): array
+    {
+        try {
+            return $this->createQueryBuilder('u')
+            ->getQuery()
+            ->getResult();
+        } catch (\Doctrine\DBAL\Exception $th) {
+            throw new Error($th->getMessage());
+        }
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */
