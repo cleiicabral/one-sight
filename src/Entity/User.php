@@ -64,12 +64,12 @@ class User
         return $this;
     }
 
-    private function getPassword(): ?string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    private function setPassword(string $password): static
+    public function setPassword(string $password): static
     {
         $this->password = $password;
 
